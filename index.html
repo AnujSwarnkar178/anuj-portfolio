@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Anuj Swarnkar — Product Owner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #060810;
+  --bg2: #0c1020;
+  --surface: rgba(255,255,255,0.04);
+  --surface2: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e8eaf2;
+  --text2: #8b90a8;
+  --text3: #555c7a;
+  --accent: #4f8ef7;
+  --accent2: #7c5cbf;
+  --accent3: #22d3c5;
+  --gold: #f5a623;
+  --glow: rgba(79,142,247,0.18);
+  --glow2: rgba(124,92,191,0.14);
+  --radius: 16px;
+  --radius2: 24px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+[data-theme="light"] {
+  --bg: #f4f5fa;
+  --bg2: #ecedf5;
+  --surface: rgba(0,0,0,0.04);
+  --surface2: rgba(0,0,0,0.07);
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #0c1020;
+  --text2: #4a5068;
+  --text3: #8b90a8;
+  --glow: rgba(79,142,247,0.12);
+  --glow2: rgba(124,92,191,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:400;line-height:1.6;overflow-x:hidden;transition:background .4s,color .4s}
+::selection{background:rgba(79,142,247,.28);color:#fff}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transition:opacity .6s ease,visibility .6s}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+.splash-mono{font-family:var(--font-display);font-size:clamp(4rem,12vw,8rem);font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent3),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:pulseGlow 1.6s ease-in-out infinite alternate}
+@keyframes pulseGlow{from{filter:drop-shadow(0 0 20px rgba(79,142,247,.4))}to{filter:drop-shadow(0 0 50px rgba(34,211,197,.6))}}
+.splash-bar-wrap{width:200px;height:2px;background:var(--border);border-radius:1px;overflow:hidden}
+.splash-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:1px;width:0%;transition:width .1s linear}
+.splash-label{font-family:var(--font-mono);font-size:.7rem;color:var(--text3);letter-spacing:.2em;text-transform:uppercase}
+
+/* CANVAS BG */
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* PROGRESS BAR */
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));z-index:900;width:0%;transition:width .1s linear}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(6,8,16,.7);border-bottom:1px solid var(--border);transition:all .3s}
+.nav-logo{font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--text);text-decoration:none;letter-spacing:-.02em}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;transition:color .2s;font-family:var(--font-mono)}
+.nav-links a:hover{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.theme-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s}
+.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+.burger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
+.burger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:1px;transition:all .3s}
+
+/* MOBILE NAV */
+.mobile-nav{position:fixed;inset:0;z-index:750;background:rgba(6,8,16,.97);backdrop-filter:blur(30px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;transform:translateX(100%);transition:transform .4s cubic-bezier(.77,0,.18,1)}
+.mobile-nav.open{transform:translateX(0)}
+.mobile-nav a{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--text);text-decoration:none;transition:color .2s}
+.mobile-nav a:hover{color:var(--accent)}
+
+/* SECTION SHARED */
+section{position:relative;z-index:1}
+.container{max-width:1140px;margin:0 auto;padding:0 2rem}
+.section-label{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);letter-spacing:.25em;text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:1.5rem}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;width:100%;max-width:1140px;margin:0 auto;padding:0 2rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border2);border-radius:100px;padding:.35rem 1rem;font-family:var(--font-mono);font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-name{font-family:var(--font-display);font-size:clamp(3rem,7vw,5.5rem);font-weight:800;line-height:1;letter-spacing:-.04em;margin-bottom:.5rem}
+.hero-name .grad{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-role{font-family:var(--font-display);font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:600;color:var(--text2);margin-bottom:1.5rem;letter-spacing:-.02em}
+.hero-summary{font-size:1rem;color:var(--text2);line-height:1.8;max-width:500px;margin-bottom:2.5rem}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;text-decoration:none;padding:.75rem 1.75rem;border-radius:100px;font-weight:600;font-size:.9rem;transition:all .3s;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(79,142,247,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,142,247,.45)}
+.btn-secondary{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border2);color:var(--text);text-decoration:none;padding:.75rem 1.75rem;border-radius:100px;font-weight:500;font-size:.9rem;transition:all .3s;cursor:pointer}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.06)}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;backdrop-filter:blur(20px);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--glow),var(--glow2));opacity:.5;pointer-events:none}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.stat-item{text-align:center;padding:1.25rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)}
+.stat-num{font-family:var(--font-display);font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+.stat-lbl{font-size:.75rem;color:var(--text3);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-top:.25rem}
+.hero-contact{margin-top:1.5rem;display:flex;flex-direction:column;gap:.6rem}
+.contact-row{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--text2)}
+.contact-row a{color:var(--accent);text-decoration:none}
+.contact-row a:hover{text-decoration:underline}
+.icon-sm{width:14px;height:14px;opacity:.6}
+
+/* TOP IMPACT */
+#impact{padding:4rem 0 2rem;background:linear-gradient(180deg,transparent,rgba(79,142,247,.04),transparent)}
+.impact-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.impact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:1.75rem;position:relative;overflow:hidden;transition:all .3s;cursor:default}
+.impact-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));opacity:0;transition:opacity .3s}
+.impact-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.impact-card:hover::before{opacity:1}
+.impact-num{font-family:var(--font-display);font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.impact-label{font-size:.85rem;color:var(--text2);margin-top:.5rem;line-height:1.5}
+.impact-context{font-family:var(--font-mono);font-size:.68rem;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:.75rem}
+
+/* EXPERIENCE */
+#experience{padding:6rem 0}
+.exp-grid{display:flex;flex-direction:column;gap:1.5rem;margin-top:3rem}
+.exp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;transition:all .3s}
+.exp-card:hover{border-color:var(--border2);box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.exp-header{padding:2rem;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;user-select:none}
+.exp-meta{}
+.exp-company{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.exp-role{font-size:.9rem;color:var(--accent);font-weight:500;margin-top:.2rem}
+.exp-dates{font-family:var(--font-mono);font-size:.72rem;color:var(--text3);margin-top:.4rem;letter-spacing:.06em}
+.exp-toggle{width:32px;height:32px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0;transition:all .3s;margin-top:.25rem}
+.exp-card.open .exp-toggle{background:var(--accent);border-color:var(--accent);color:#fff;transform:rotate(45deg)}
+.exp-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.exp-card.open .exp-body{max-height:800px}
+.exp-body-inner{padding:0 2rem 2rem;border-top:1px solid var(--border)}
+.exp-bullets{list-style:none;margin-top:1.25rem;display:flex;flex-direction:column;gap:.85rem}
+.exp-bullets li{display:flex;gap:.75rem;font-size:.9rem;color:var(--text2);line-height:1.6}
+.exp-bullets li::before{content:'→';color:var(--accent3);flex-shrink:0;margin-top:1px;font-family:var(--font-mono)}
+.metric-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem}
+.chip{display:inline-flex;align-items:center;gap:.3rem;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);color:var(--accent);border-radius:100px;padding:.25rem .75rem;font-size:.72rem;font-family:var(--font-mono);letter-spacing:.04em}
+.chip.green{background:rgba(34,211,197,.08);border-color:rgba(34,211,197,.25);color:var(--accent3)}
+.chip.purple{background:rgba(124,92,191,.1);border-color:rgba(124,92,191,.25);color:#9d7de8}
+.chip.gold{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.2);color:var(--gold)}
+
+/* ACHIEVEMENTS */
+#achievements{padding:6rem 0;background:linear-gradient(180deg,transparent,rgba(124,92,191,.04),transparent)}
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;position:relative;overflow:hidden;transition:all .4s;cursor:default}
+.ach-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--glow),transparent 70%);opacity:0;transition:opacity .4s}
+.ach-card:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:0 24px 48px rgba(0,0,0,.3)}
+.ach-card:hover::after{opacity:1}
+.ach-icon{font-size:2rem;margin-bottom:1rem;position:relative;z-index:1}
+.ach-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:.3rem;position:relative;z-index:1}
+.ach-date{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:1}
+
+/* SKILLS */
+#skills{padding:6rem 0}
+.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem}
+.skill-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;transition:all .3s}
+.skill-group:hover{border-color:var(--border2);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.skill-group-title{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:.6rem}
+.skill-group-title span{font-size:1.2rem}
+.skill-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.skill-tag{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.35rem .8rem;font-size:.8rem;color:var(--text2);font-family:var(--font-mono);transition:all .2s}
+.skill-tag:hover{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.06)}
+
+/* CERTIFICATIONS */
+#certifications{padding:6rem 0;background:linear-gradient(180deg,transparent,rgba(79,142,247,.04),transparent)}
+.certs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:3rem}
+.cert-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:all .3s;position:relative;overflow:hidden}
+.cert-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent2));opacity:0;transition:opacity .3s}
+.cert-card:hover{transform:translateX(4px);border-color:var(--border2)}
+.cert-card:hover::before{opacity:1}
+.cert-name{font-size:.88rem;font-weight:500;color:var(--text);line-height:1.4}
+.cert-icon{font-size:1.2rem;margin-bottom:.6rem;opacity:.8}
+
+/* EDUCATION */
+#education{padding:6rem 0}
+.edu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:3rem}
+.edu-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;position:relative;overflow:hidden;transition:all .3s}
+.edu-card:hover{border-color:var(--border2);box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.edu-degree{font-family:var(--font-display);font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.edu-institute{font-size:.95rem;color:var(--accent);font-weight:500;margin-top:.3rem}
+.edu-meta{display:flex;gap:1rem;margin-top:.75rem;flex-wrap:wrap}
+.edu-meta span{font-family:var(--font-mono);font-size:.72rem;color:var(--text3);letter-spacing:.06em;background:var(--surface2);padding:.2rem .6rem;border-radius:6px;border:1px solid var(--border)}
+.cgpa-badge{font-family:var(--font-display);font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--gold),#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-top:.75rem}
+
+/* FOOTER */
+footer{padding:4rem 0 2rem;border-top:1px solid var(--border);text-align:center}
+.footer-name{font-family:var(--font-display);font-size:1.5rem;font-weight:800;margin-bottom:.5rem;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-text{font-size:.85rem;color:var(--text3)}
+.footer-links{display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;list-style:none}
+.footer-links a{color:var(--text3);text-decoration:none;font-size:.82rem;font-family:var(--font-mono);transition:color .2s}
+.footer-links a:hover{color:var(--accent)}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* STICKY SCROLL SPY */
+#scrollspy{position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);z-index:700;display:flex;flex-direction:column;gap:.6rem}
+.spy-dot{width:6px;height:6px;border-radius:3px;background:var(--border2);transition:all .3s;cursor:pointer;position:relative}
+.spy-dot.active{background:var(--accent);height:20px}
+.spy-dot:hover{background:var(--accent2)}
+
+/* COUNTER */
+.count-up{display:inline-block}
+
+/* MOBILE */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  .hero-inner{grid-template-columns:1fr;gap:2.5rem;padding:0 1.25rem}
+  .hero-card{display:none}
+  .impact-strip{grid-template-columns:1fr}
+  .ach-grid{grid-template-columns:1fr 1fr}
+  .skills-grid{grid-template-columns:1fr}
+  .certs-grid{grid-template-columns:1fr 1fr}
+  .edu-grid{grid-template-columns:1fr}
+  .container{padding:0 1.25rem}
+  #scrollspy{display:none}
+  .hero-name{font-size:clamp(2.5rem,10vw,3.5rem)}
+}
+@media(max-width:500px){
+  .ach-grid{grid-template-columns:1fr}
+  .certs-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  #bgCanvas{display:none}
+}
+
+/* GLOW LINE decoration */
+.glow-divider{height:1px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent3),transparent);margin:0;opacity:.35}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-mono">AS</div>
+  <div class="splash-bar-wrap"><div class="splash-bar" id="splashBar"></div></div>
+  <div class="splash-label">Loading Portfolio</div>
+</div>
+
+<!-- CANVAS BACKGROUND -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- PROGRESS BAR -->
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">Anuj<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#education">Education</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="theme-btn" id="themeToggle" title="Toggle theme">☀️</button>
+    <button class="burger" id="burgerBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#experience" class="mob-link">Experience</a>
+  <a href="#achievements" class="mob-link">Achievements</a>
+  <a href="#skills" class="mob-link">Skills</a>
+  <a href="#certifications" class="mob-link">Certs</a>
+  <a href="#education" class="mob-link">Education</a>
+</div>
+
+<!-- SCROLL SPY -->
+<div id="scrollspy">
+  <div class="spy-dot active" data-section="hero" title="Hero"></div>
+  <div class="spy-dot" data-section="impact" title="Impact"></div>
+  <div class="spy-dot" data-section="experience" title="Experience"></div>
+  <div class="spy-dot" data-section="achievements" title="Achievements"></div>
+  <div class="spy-dot" data-section="skills" title="Skills"></div>
+  <div class="spy-dot" data-section="certifications" title="Certifications"></div>
+  <div class="spy-dot" data-section="education" title="Education"></div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge reveal"><div class="hero-badge-dot"></div>Available for opportunities</div>
+      <h1 class="hero-name reveal reveal-delay-1">Anuj<br/><span class="grad">Swarnkar</span></h1>
+      <p class="hero-role reveal reveal-delay-2">Product Owner · SaaS · APIs · AI</p>
+      <p class="hero-summary reveal reveal-delay-3">Product Owner with experience in enterprise SaaS, APIs, and AI-driven products. Strong in user-centric and data-driven solution discovery, client implementations, integration design, and delivering clear business impact across global customers.</p>
+      <div class="hero-ctas reveal reveal-delay-4">
+        <a href="#experience" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          View Experience
+        </a>
+        <a href="#" class="btn-secondary" id="downloadBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download Resume
+        </a>
+      </div>
+    </div>
+    <div class="hero-card reveal reveal-delay-2">
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num count-up" data-target="5">0</span>
+          <div class="stat-lbl">Years Exp.</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num count-up" data-target="46">0</span><span class="stat-num" style="-webkit-text-fill-color:var(--accent);background:none;font-size:1.5rem">%</span>
+          <div class="stat-lbl">ARR Growth</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">1.5M</span>
+          <div class="stat-lbl">Monthly API Calls</div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">9.44</span>
+          <div class="stat-lbl">M.Tech CGPA</div>
+        </div>
+      </div>
+      <div class="hero-contact">
+        <div class="contact-row">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:swarnkaranuj178@gmail.com">swarnkaranuj178@gmail.com</a>
+        </div>
+        <div class="contact-row">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+          (+91) 8225822178
+        </div>
+        <div class="contact-row">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          <a href="https://linkedin.com/in/anuj-swarnkar-511605130" target="_blank">linkedin.com/in/anuj-swarnkar-511605130</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- TOP 3 IMPACT -->
+<section id="impact" style="padding:5rem 0 3rem">
+  <div class="container">
+    <div class="section-label reveal">Top 3 Impact Highlights</div>
+    <div class="impact-strip">
+      <div class="impact-card reveal reveal-delay-1">
+        <div class="impact-num">$7.3M</div>
+        <div class="impact-label">ARR scaled from $5M within one year by improving adoption and platform reliability</div>
+        <div class="impact-context">PowerSchool · Cloud SaaS</div>
+      </div>
+      <div class="impact-card reveal reveal-delay-2">
+        <div class="impact-num">35%+</div>
+        <div class="impact-label">Manual workflows automated using LLMs and agentic AI tools, cutting feature delivery by 25%</div>
+        <div class="impact-context">AI Initiatives · PowerSchool</div>
+      </div>
+      <div class="impact-card reveal reveal-delay-3">
+        <div class="impact-num">1.5M</div>
+        <div class="impact-label">Monthly API calls supported on Payvantage 2.0 and the API Developer Portal at Axis Bank</div>
+        <div class="impact-context">Axis Bank · Digital Platforms</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <div class="section-label reveal">Career Journey</div>
+    <h2 class="section-title reveal">Experience</h2>
+    <div class="exp-grid">
+
+      <!-- PowerSchool -->
+      <div class="exp-card reveal" id="expCard0">
+        <div class="exp-header" onclick="toggleExp(0)">
+          <div class="exp-meta">
+            <div class="exp-company">PowerSchool India Pvt. Ltd.</div>
+            <div class="exp-role">Product Owner (Manager) — Compliance (Cloud SaaS Platform)</div>
+            <div class="exp-dates">Dec 2024 – Present</div>
+            <div class="metric-chips" style="margin-top:.75rem">
+              <span class="chip">$5M → $7.3M ARR</span>
+              <span class="chip green">35% Automation</span>
+              <span class="chip purple">20% Retention ↑</span>
+              <span class="chip gold">NPS +12pts</span>
+            </div>
+          </div>
+          <div class="exp-toggle">+</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-body-inner">
+            <ul class="exp-bullets">
+              <li>Owned the full product lifecycle for a cloud compliance platform used by more than 120 clients, scaling ARR from $5M to $7.3M within one year by improving adoption and platform reliability.</li>
+              <li>Led AI initiatives using LLMs and agentic AI tools to automate more than 35% of manual workflows and cut feature delivery time by 25%.</li>
+              <li>Reviewed data models, integration paths, and API workflows with technical teams to support complex enterprise needs.</li>
+              <li>Increased customer retention by 20% and boosted NPS by 12 points through Gainsight-driven feedback loops and structured post-launch programs.</li>
+              <li>Partnered with stakeholders across multiple international regions to align product strategy with cloud and compliance trends, achieving a 30% reduction in regulatory issues.</li>
+              <li>Managed change requests and best practice adoption, improving customer value realization by more than 10%.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Axis Bank -->
+      <div class="exp-card reveal" id="expCard1">
+        <div class="exp-header" onclick="toggleExp(1)">
+          <div class="exp-meta">
+            <div class="exp-company">Axis Bank Ltd.</div>
+            <div class="exp-role">Product Owner (Manager) — Digital Platforms and API Banking</div>
+            <div class="exp-dates">July 2022 – Dec 2024</div>
+            <div class="metric-chips" style="margin-top:.75rem">
+              <span class="chip">28% Partner Adoption ↑</span>
+              <span class="chip green">40% Engagement ↑</span>
+              <span class="chip purple">18% Conversion ↑</span>
+              <span class="chip">20+ Fintech Partners</span>
+            </div>
+          </div>
+          <div class="exp-toggle">+</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-body-inner">
+            <ul class="exp-bullets">
+              <li>Managed the full product lifecycle for Payvantage 2.0 and the API Developer Portal, supporting more than 1.5M monthly API calls.</li>
+              <li>Designed integration architecture for more than 20 fintech partners, covering authentication, API flows, and data exchange.</li>
+              <li>Defined roadmaps, KPIs, and success metrics, improving partner adoption by 28% and developer engagement by 32%.</li>
+              <li>Used Google Analytics to refine customer journeys and improve conversion rates by 18%.</li>
+              <li>Built the industry-first AI-driven hyper-personalized developer portal from 0 → 1, increasing partner satisfaction by 22% and engagement by 40%.</li>
+              <li>Forged strategic fintech partnerships, accelerating new-to-bank customer growth by 25% and expanding digital adoption.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tropilite -->
+      <div class="exp-card reveal" id="expCard2">
+        <div class="exp-header" onclick="toggleExp(2)">
+          <div class="exp-meta">
+            <div class="exp-company">Tropilite Foods Pvt. Ltd.</div>
+            <div class="exp-role">Project Management Intern</div>
+            <div class="exp-dates">Mar 2020 – May 2020</div>
+          </div>
+          <div class="exp-toggle">+</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-body-inner">
+            <ul class="exp-bullets">
+              <li>Collaborated with internal and external stakeholders, including scientists and industry experts, to gather insights and perspectives on end-to-end product innovation and development.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="container">
+    <div class="section-label reveal">Recognition</div>
+    <h2 class="section-title reveal">Achievements</h2>
+    <div class="ach-grid">
+      <div class="ach-card reveal reveal-delay-1">
+        <div class="ach-icon">🏆</div>
+        <div class="ach-title">Infosys Finacle Award</div>
+        <div class="ach-date">June 2024</div>
+      </div>
+      <div class="ach-card reveal reveal-delay-2">
+        <div class="ach-icon">🥉</div>
+        <div class="ach-title">Bank-a-thon 2.0, Axis Bank — Top 3</div>
+        <div class="ach-date">Feb 2023</div>
+      </div>
+      <div class="ach-card reveal reveal-delay-3">
+        <div class="ach-icon">🎓</div>
+        <div class="ach-title">Academic Excellence Awards — AUMP</div>
+        <div class="ach-date">Sept 2018, 2019</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label reveal">Capabilities</div>
+    <h2 class="section-title reveal">Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-group reveal reveal-delay-1">
+        <div class="skill-group-title"><span>📦</span> Product</div>
+        <div class="skill-tags">
+          <span class="skill-tag">SaaS Product Management</span>
+          <span class="skill-tag">Product Strategy / Lifecycle</span>
+          <span class="skill-tag">Implementation Planning</span>
+          <span class="skill-tag">Agile / Scrum / JIRA</span>
+          <span class="skill-tag">Regulatory & Compliance</span>
+        </div>
+      </div>
+      <div class="skill-group reveal reveal-delay-2">
+        <div class="skill-group-title"><span>🔌</span> Technical</div>
+        <div class="skill-tags">
+          <span class="skill-tag">API Integration</span>
+          <span class="skill-tag">Swagger / OpenAPI</span>
+          <span class="skill-tag">System Flows / Architecture</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">AI Based Prototyping</span>
+        </div>
+      </div>
+      <div class="skill-group reveal reveal-delay-3">
+        <div class="skill-group-title"><span>📊</span> Analytics & Design</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Google Analytics</span>
+          <span class="skill-tag">Figma</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="container">
+    <div class="section-label reveal">Learning</div>
+    <h2 class="section-title reveal">Certifications</h2>
+    <div class="certs-grid">
+      <div class="cert-card reveal reveal-delay-1"><div class="cert-icon">🤖</div><div class="cert-name">Building API-Driven AI Agents</div></div>
+      <div class="cert-card reveal reveal-delay-2"><div class="cert-icon">🧠</div><div class="cert-name">AI Agent for Product Leaders</div></div>
+      <div class="cert-card reveal reveal-delay-3"><div class="cert-icon">📈</div><div class="cert-name">Data Driven Product Management</div></div>
+      <div class="cert-card reveal reveal-delay-1"><div class="cert-icon">⚡</div><div class="cert-name">Leading Through AI Agent Disruption</div></div>
+      <div class="cert-card reveal reveal-delay-2"><div class="cert-icon">🔮</div><div class="cert-name">AI for Product Management</div></div>
+      <div class="cert-card reveal reveal-delay-3"><div class="cert-icon">📱</div><div class="cert-name">Digital Adoption</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-divider"></div>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="container">
+    <div class="section-label reveal">Academic Background</div>
+    <h2 class="section-title reveal">Education</h2>
+    <div class="edu-grid">
+      <div class="edu-card reveal reveal-delay-1">
+        <div class="edu-degree">M.Tech</div>
+        <div class="edu-institute">IIT Kharagpur</div>
+        <div class="edu-meta">
+          <span>2020 – 2022</span>
+        </div>
+        <div class="cgpa-badge">9.44 <span style="font-size:1rem;font-family:var(--font-mono);opacity:.5">/ 10</span></div>
+      </div>
+      <div class="edu-card reveal reveal-delay-2">
+        <div class="edu-degree">B.Tech</div>
+        <div class="edu-institute">AUMP, Gwalior</div>
+        <div class="edu-meta">
+          <span>2016 – 2020</span>
+        </div>
+        <div class="cgpa-badge">9.10 <span style="font-size:1rem;font-family:var(--font-mono);opacity:.5">/ 10</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-name">Anuj Swarnkar</div>
+    <div class="footer-text">Product Owner · Enterprise SaaS · APIs · AI</div>
+    <ul class="footer-links">
+      <li><a href="mailto:swarnkaranuj178@gmail.com">Email</a></li>
+      <li><a href="https://linkedin.com/in/anuj-swarnkar-511605130" target="_blank">LinkedIn</a></li>
+      <li><a href="tel:+918225822178">+91 8225822178</a></li>
+    </ul>
+    <div style="margin-top:2rem;font-size:.75rem;color:var(--text3);font-family:var(--font-mono)">© 2025 Anuj Swarnkar · All rights reserved</div>
+  </div>
+</footer>
+
+<script>
+// ——— SPLASH ———
+const splashBar = document.getElementById('splashBar');
+let prog = 0;
+const splashInterval = setInterval(() => {
+  prog += Math.random() * 18 + 4;
+  if (prog >= 100) { prog = 100; clearInterval(splashInterval); }
+  splashBar.style.width = prog + '%';
+  if (prog === 100) setTimeout(() => {
+    document.getElementById('splash').classList.add('out');
+    setTimeout(initReveal, 200);
+  }, 300);
+}, 80);
+
+// ——— ANIMATED BACKGROUND ———
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], lines = [], animId;
+const isMobile = () => window.innerWidth < 768;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initParticles() {
+  const count = isMobile() ? 30 : 70;
+  particles = Array.from({length: count}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.5 + 0.3,
+    vx: (Math.random() - 0.5) * 0.18,
+    vy: (Math.random() - 0.5) * 0.18,
+    opacity: Math.random() * 0.4 + 0.1
+  }));
+}
+
+function drawMeshGradient(t) {
+  // Soft animated gradient blobs
+  const blobs = [
+    { x: W*0.15 + Math.sin(t*0.0003)*W*0.08, y: H*0.2 + Math.cos(t*0.0004)*H*0.06, r: W*0.32, c: 'rgba(79,142,247,' },
+    { x: W*0.85 + Math.cos(t*0.0002)*W*0.07, y: H*0.75 + Math.sin(t*0.0005)*H*0.08, r: W*0.3, c: 'rgba(124,92,191,' },
+    { x: W*0.5 + Math.sin(t*0.0004)*W*0.1, y: H*0.5 + Math.cos(t*0.0003)*H*0.1, r: W*0.25, c: 'rgba(34,211,197,' },
+  ];
+  for (const b of blobs) {
+    const g = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+    g.addColorStop(0, b.c + '0.045)');
+    g.addColorStop(1, b.c + '0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(160,180,255,${p.opacity})`;
+    ctx.fill();
+  }
+}
+
+function drawConnections() {
+  const maxDist = isMobile() ? 100 : 140;
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i+1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < maxDist) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(79,142,247,${0.07 * (1 - d/maxDist)})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+let lastT = 0;
+function animate(t) {
+  animId = requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, W, H);
+  drawMeshGradient(t);
+  drawConnections();
+  drawParticles();
+  lastT = t;
+}
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  resize();
+  initParticles();
+  animate(0);
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+} else {
+  canvas.style.display = 'none';
+}
+
+// ——— THEME TOGGLE ———
+const themeBtn = document.getElementById('themeToggle');
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  themeBtn.textContent = cur === 'dark' ? '🌙' : '☀️';
+});
+
+// ——— MOBILE NAV ———
+const burger = document.getElementById('burgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+burger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+document.querySelectorAll('.mob-link').forEach(a => {
+  a.addEventListener('click', () => mobileNav.classList.remove('open'));
+});
+
+// ——— SCROLL PROGRESS ———
+window.addEventListener('scroll', () => {
+  const p = document.getElementById('progress');
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  p.style.width = pct + '%';
+  updateScrollSpy();
+});
+
+// ——— SCROLL SPY ———
+const sections = ['hero','impact','experience','achievements','skills','certifications','education'];
+function updateScrollSpy() {
+  let cur = sections[0];
+  for (const id of sections) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= 120) cur = id;
+  }
+  document.querySelectorAll('.spy-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.section === cur);
+  });
+}
+document.querySelectorAll('.spy-dot').forEach(d => {
+  d.addEventListener('click', () => {
+    document.getElementById(d.dataset.section)?.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+// ——— SCROLL REVEAL ———
+function initReveal() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
+  }, {threshold: 0.1});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+// ——— EXP ACCORDION ———
+function toggleExp(i) {
+  const card = document.getElementById('expCard' + i);
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.exp-card').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+
+// ——— COUNTER ———
+function animateCount(el) {
+  const target = +el.dataset.target;
+  const dur = 1500;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / dur, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const countIo = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); countIo.unobserve(e.target); }});
+}, {threshold:.5});
+document.querySelectorAll('.count-up').forEach(el => countIo.observe(el));
+
+// ——— DOWNLOAD RESUME ———
+document.getElementById('downloadBtn').addEventListener('click', e => {
+  e.preventDefault();
+  window.print();
+});
+</script>
+
+<style>
+@media print {
+  #splash,#bgCanvas,#progress,nav,#scrollspy,#mobileNav,.hero-ctas,.exp-toggle,.burger,.theme-btn,.glow-divider { display:none!important }
+  body,html { background:#fff!important; color:#000!important }
+  .hero-name .grad { -webkit-text-fill-color:#4f8ef7!important }
+  section { break-inside:avoid }
+  .exp-body { max-height:none!important }
+  .reveal { opacity:1!important; transform:none!important }
+}
+</style>
+</body>
+</html>
